@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">IngredientsMap BETA</string>
+    <string name="recipe_name">Recipe Name</string>
+    <string name="order"> ORDER </string>
+</resources>
