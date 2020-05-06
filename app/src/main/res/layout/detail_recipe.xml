@@ -12,44 +12,72 @@
         android:id="@+id/recipeName"
         android:layout_width="174dp"
         android:layout_height="92dp"
-        android:layout_above="@+id/button"
-        android:layout_below="@+id/mapView"
         android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="119dp"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="118dp"
+        android:layout_marginStart="115dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="122dp"
         android:layout_marginBottom="304dp"
         android:gravity="center"
         android:text="TESTOTESTOTESTO"
         android:textColor="#FFFFFF" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/showMap"
         android:layout_width="133dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp"
+        android:layout_marginStart="132dp"
+        android:layout_marginBottom="41dp"
         android:text="@string/order" />
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="230dp"
-        android:layout_height="169dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="94dp"
-        android:layout_marginTop="39dp" />
 
     <ListView
         android:id="@+id/listviewIngredients"
-        android:layout_width="253dp"
-        android:layout_height="130dp"
+        android:layout_width="252dp"
+        android:layout_height="144dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="260dp"
+        android:layout_marginBottom="186dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="342dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="216dp" />
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="43dp"
+        android:layout_marginBottom="129dp"
+        android:onClick="foodPosition"
+        android:text="@string/my_food" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="318dp"
+        android:text="@string/recipe" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="189dp"
+        android:layout_height="172dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="102dp"
+        android:layout_marginTop="123dp"
+        android:layout_marginEnd="120dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
 </RelativeLayout>

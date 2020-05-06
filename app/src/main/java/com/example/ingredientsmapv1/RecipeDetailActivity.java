@@ -1,13 +1,21 @@
 package com.example.ingredientsmapv1;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class RecipeDetailActivity extends AppCompatActivity {
@@ -42,6 +50,24 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
         getAll(r);
 
+        switch(r) {
+            case 0:
+                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+                        .execute("https://static01.nyt.com/images/2018/08/10/dining/carbonara-horizontal/carbonara-horizontal-articleLarge.jpg");
+                break;
+            case 1:
+                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+                        .execute("https://www.cucchiaio.it/content/cucchiaio/it/ricette/2016/02/tortino-al-cioccolato-con-cuore-morbido/jcr:content/header-par/image-single.img10.jpg/1456741969164.jpg");
+                break;
+            case 2:
+                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+                        .execute("https://i2.wp.com/www.piccolericette.net/piccolericette/wp-content/uploads/2017/06/3234_Pizza.jpg");
+                break;
+            default:
+                Log.d("NO_IMAGE", "onCreate() returned: ");
+                // code block
+        }
+
 //        arrayList.add("Ingrediente 1");
 //        arrayList.add("Ingrediente 2");
 //        arrayList.add("Ingrediente 3");
@@ -58,6 +84,37 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
         while (res.moveToNext()) {
             arrayList.add(res.getString(2));
+        }
+    }
+
+    public void foodPosition (View v) {
+        Log.d("CLICKED", "orderMethod() returned: NADA");
+        Intent intent = new Intent(RecipeDetailActivity.this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+    private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 }
