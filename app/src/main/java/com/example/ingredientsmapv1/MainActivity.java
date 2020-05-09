@@ -6,23 +6,65 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.service.voice.AlwaysOnHotwordDetector;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 // import android.database.sqlite;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "FIREBASE";
     DBOpenHelper myDB;
     ListView listView;
     final ArrayList<String> arrayList = new ArrayList<>();
+    final ArrayList<String> r = new ArrayList<>();
+    Map<String, List<String>> hm = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ON CREATE", "onCreate: onCreate called");
+        // Write a message to the database
+        final DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("ingredients");
+//        Log.d("Testing DB", "onCreate() returned: " + recipeRef);
+//        final DatabaseReference recipeRef = database.getReference("ingredientsmap");
+
+        recipeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("TEST", "onDataChange() returned: " + dataSnapshot.getValue());
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    arrayList.add(child.getKey());
+                    ArrayList r = (ArrayList) child.getValue();
+                    hm.put(child.getKey(), r);
+                }
+                Log.d(TAG, "onDataChange: " + hm);
+                fillList();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+
 
         super.onCreate(savedInstanceState);
         DBAdapter dbAdapter = DBAdapter.getInstance(this);
@@ -49,19 +91,19 @@ public class MainActivity extends AppCompatActivity {
 //         myDB.InsertIngData(3, "Formaggio", 2);
 //         myDB.InsertIngData(3, "Sale", 2);
 
-        getAll();
+//        getAll();
 //        arrayList.add("Pasta Carbonara");
 //        arrayList.add("Pizza Quattro Stagioni");
 //        arrayList.add("Tortino al cioccolato");
 //        arrayList.add("DIOPORCO");
+    }
 
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
+    public void fillList() {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("CLICKED ELEMENT", "onItemClick() returned: " + position);
                 Intent intent = new Intent(MainActivity.this, RecipeDetailActivity.class);
                 intent.putExtra("EXTRA_RECIPE_DETAIL_POSITION", position);
                 intent.putExtra("EXTRA_RECIPE_DETAIL_NAME", arrayList.get(position));
@@ -79,5 +121,6 @@ public class MainActivity extends AppCompatActivity {
         while (res.moveToNext()) {
             arrayList.add(res.getString(1));
         }
+        Log.d(TAG, "getAll() returned: " + arrayList);
     }
 }
