@@ -5,6 +5,6 @@
     <string name="stuff"> STUFF </string>
     <string name="title_activity_maps">Map</string>
     <string name="google_maps_key">AIzaSyDq3sdOoAnp-J-Jngnt0Z-f86c63MBIRgY</string>
-    <string name="my_food">Where is my food coming from?</string>
-    <string name="recipe">See the steps of my recipe</string>
+    <string name="my_food">Where\'s my food?</string>
+    <string name="recipe">Steps</string>
 </resources>

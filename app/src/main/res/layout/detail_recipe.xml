@@ -31,8 +31,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="132dp"
-        android:layout_marginBottom="41dp"
+        android:layout_marginStart="127dp"
+        android:layout_marginBottom="38dp"
         android:text="@string/order" />
 
     <ListView
@@ -42,42 +42,43 @@
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:layout_marginTop="260dp"
-        android:layout_marginBottom="186dp" />
+        android:layout_marginBottom="236dp" />
 
     <Button
         android:id="@+id/button"
-        android:layout_width="342dp"
+        android:layout_width="211dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="26dp"
-        android:layout_marginEnd="43dp"
-        android:layout_marginBottom="129dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginEnd="189dp"
+        android:layout_marginBottom="132dp"
         android:onClick="foodPosition"
         android:text="@string/my_food" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
+        android:layout_width="122dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="318dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="129dp"
         android:text="@string/recipe" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="189dp"
-        android:layout_height="172dp"
+        android:layout_width="338dp"
+        android:layout_height="178dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="102dp"
-        android:layout_marginTop="123dp"
-        android:layout_marginEnd="120dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="37dp"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
 </RelativeLayout>
