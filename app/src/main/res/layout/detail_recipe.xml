@@ -24,17 +24,6 @@
         android:text="TESTOTESTOTESTO"
         android:textColor="#FFFFFF" />
 
-    <Button
-        android:id="@+id/showMap"
-        android:layout_width="133dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="127dp"
-        android:layout_marginBottom="38dp"
-        android:text="@string/order" />
-
     <ListView
         android:id="@+id/listviewIngredients"
         android:layout_width="252dp"
@@ -46,15 +35,15 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="211dp"
+        android:layout_width="122dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="11dp"
-        android:layout_marginEnd="189dp"
-        android:layout_marginBottom="132dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginEnd="216dp"
+        android:layout_marginBottom="125dp"
         android:onClick="foodPosition"
         android:text="@string/my_food" />
 
@@ -64,8 +53,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="26dp"
-        android:layout_marginBottom="129dp"
+        android:layout_marginEnd="77dp"
+        android:layout_marginBottom="125dp"
+        android:onClick="goToSteps"
         android:text="@string/recipe" />
 
     <ImageView

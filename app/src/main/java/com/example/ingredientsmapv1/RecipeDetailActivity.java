@@ -23,6 +23,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class RecipeDetailActivity extends AppCompatActivity {
@@ -109,8 +110,9 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     public void foodPosition (View v) {
-        Log.d("CLICKED", "orderMethod() returned: NADA");
         Intent intent = new Intent(RecipeDetailActivity.this, MapsActivity.class);
+        intent.putExtra("EXTRA_RECIPE_DETAIL_NAME", name);
+        intent.putExtra("EXTRA_RECIPE_INGREDIENTS", (Serializable)arrayList);
         startActivity(intent);
     }
 
@@ -137,5 +139,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
+    }
+
+    public void goToSteps(View v) {
+        Intent intent = new Intent(RecipeDetailActivity.this, Description.class);
+        intent.putExtra("EXTRA_RECIPE_DETAIL_NAME", name);
+        Log.d("INTENT", "Intent created");
+        startActivity(intent);
     }
 }
