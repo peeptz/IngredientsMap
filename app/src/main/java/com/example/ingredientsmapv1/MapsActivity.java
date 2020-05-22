@@ -10,6 +10,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -35,9 +37,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -47,6 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Object mLastKnownLocation;
     double longitude;
     double latitude;
+    Geocoder geocoder;
+    List<Address> addresses;
     private GoogleMap mMap;
     private String name;
     final ArrayList<String> arrayList = new ArrayList<>();
@@ -57,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int counter = 0;
     TextView emissions;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,29 +84,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void getCoordinates() {
+        Log.d("MAP SIZE", "getCoordinates: " + map.size());
+        Log.d("INGRIDIENTS SIZE", "getCoordinates: " + ingredients.size());
         for (int i = 0; i < ingredients.size(); i++) {
             String ing = ingredients.get(i);
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("locations/" + ing );
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("locations/" + ing);
 //            Query query = reference.orderByChild(name);
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-//                    Log.d("RESULT", "onDataChange: " + dataSnapshot.getKey());
-//                    Log.d("RESULT", "onDataChange: " + dataSnapshot.getValue());
                     map.put(dataSnapshot.getKey(), dataSnapshot.getValue().toString());
-
-//                    for (DataSnapshot child : dataSnapshot.getChildren()) {
-//                        String ingredient = child.getValue().toString();
-//                        arrayList.add(ingredient);
-//                    }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             });
-        }
+        };
     }
 
 
@@ -114,7 +119,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
         mMap = googleMap;
         updateLocationUI();
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -126,16 +130,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             longitude = location.getLongitude();
             latitude = location.getLatitude();
         }
-        for ( Map.Entry<String, String> entry : map.entrySet()) {
-            String ing = entry.getKey();
-            double lat = Double.parseDouble(entry.getValue().split(",")[0]);
-            double lng = Double.parseDouble(entry.getValue().split(",")[1]);
-            Log.d("POSITION", "onMapReady: POSITION FOR " + ing + " equals lat " + lat + " lng" + lng);
-            LatLng foodLocation = new LatLng(lat, lng);
-            mMap.addMarker(new MarkerOptions().position(foodLocation).title(ing));
-            calculateDistance(foodLocation);
+        Log.d("MAP", "onMapReady: MAP" + map);
+        if (map.size() > 0) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                String ing = entry.getKey();
+                double lat = Double.parseDouble(entry.getValue().split(",")[0]);
+                double lng = Double.parseDouble(entry.getValue().split(",")[1]);
+                Log.d("POSITION", "onMapReady: POSITION FOR " + ing + " equals lat " + lat + " lng " + lng);
+                LatLng foodLocation = new LatLng(lat, lng);
+                String address = getAddres(foodLocation);
+                mMap.addMarker(new MarkerOptions().position(foodLocation).title(ing + ":  " + address));
+                calculateDistance(foodLocation);
+            }
+        } else {
+            Log.d("MAP EMPTY", "onMapReady: the hashmap was empty");
         }
         currentLocation = new LatLng(latitude, longitude);
+        mMap.setMyLocationEnabled(true);
         mMap.addMarker(new MarkerOptions().position(currentLocation).title("Sei qui"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
         mMap.setMinZoomPreference(10.0f);
@@ -166,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         float inKM = distance/1000.00f;
         float grCO2 = inKM * 147.00f;
         Log.d("grCO2/km", "calculateEmissions: " + grCO2);
-        emissions.setText((grCO2) + " grC02/trip");
+        emissions.setText("Delivery the ingredients will cost " + (grCO2*2) + " grC02/roundtrip");
     }
 
 
@@ -206,4 +217,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public String getAddres(LatLng LatLng) {
+        geocoder = new Geocoder(this, Locale.getDefault());
+        String fullAddress = " ";
+        try {
+            addresses = geocoder.getFromLocation(LatLng.latitude, LatLng.longitude, 1);
+
+            String address = addresses.get(0).getAddressLine(0);
+//            String area = addresses.get(0).getLocality();
+//            String city = addresses.get(0).getAdminArea();
+//            String country = addresses.get(0).getCountryName();
+//            String postalCode = addresses.get(0).getPostalCode();
+            fullAddress = address;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return fullAddress;
+    }
 }
