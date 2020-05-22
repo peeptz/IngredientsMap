@@ -1,18 +1,16 @@
 package com.example.ingredientsmapv1;
+
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,22 +29,20 @@ public class RecipeDetailActivity extends AppCompatActivity {
     ListView listView;
     final ArrayList<String> arrayList = new ArrayList<>();
     int r;
-    String name = "Undefined";
+    String name = " ";
+    int LAUNCH_SECOND_ACTIVITY = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ON CREATE", "onCreate: onCreate called for Activity RecipeDetail");
         super.onCreate(savedInstanceState);
 
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            // Intent mIntent = getIntent();
-            // int intValue = mIntent.getIntExtra("intVariableName", 0);
             int position = extras.getInt("EXTRA_RECIPE_DETAIL_POSITION");
             name = extras.getString("EXTRA_RECIPE_DETAIL_NAME");
             r = position;
-            // Log.d("Recived extra", "Argument recieved is " + name + " in position " + position);
         }
 
         setContentView(R.layout.detail_recipe);
@@ -56,7 +51,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         myDB = new DBOpenHelper(this);
         listView =(ListView) findViewById(R.id.listviewIngredients);
 
-        getAll(r);
+        getAll(name);
 
         switch(name) {
             case "Carbonara":
@@ -73,21 +68,13 @@ public class RecipeDetailActivity extends AppCompatActivity {
                 break;
             default:
                 Log.d("NO_IMAGE", "onCreate() returned: ");
-                // code block
         }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(arrayAdapter);
     }
 
-    public void getAll(int r) {
-//        Log.v("CALLING GETALL", "With r " + 1);
-//        Cursor res = myDB.getIngData(r);
-//        if (res.getCount() == 0) {
-//            Log.e("NO_ELEMENT", "NO ELEMENTS IN THE DB");
-//        }
-//        while (res.moveToNext()) {
-//            arrayList.add(res.getString(2));
-//        }
+    public void getAll(String name) {
+        Log.d("GET ALL", "getAll: getting all " +  name);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ingredients/" + name);
         Log.d("NAME", "getAll: " + name);
         Query query = reference.orderByChild(name);
@@ -113,7 +100,7 @@ public class RecipeDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(RecipeDetailActivity.this, MapsActivity.class);
         intent.putExtra("EXTRA_RECIPE_DETAIL_NAME", name);
         intent.putExtra("EXTRA_RECIPE_INGREDIENTS", (Serializable)arrayList);
-        startActivity(intent);
+        startActivityForResult(intent, LAUNCH_SECOND_ACTIVITY);
     }
 
     private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

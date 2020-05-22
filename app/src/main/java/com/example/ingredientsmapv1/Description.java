@@ -1,5 +1,7 @@
 package com.example.ingredientsmapv1;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -34,9 +36,6 @@ public class Description extends AppCompatActivity {
             Log.d("NAME", "onCreate: " + name);
         }
         getDescription();
-//        setContentView(R.layout.preparation);
-//        TextView recipeName = (TextView) findViewById (R.id.textView);
-//        recipeName.setText(name);
     }
 
     public void getDescription() {
@@ -66,5 +65,15 @@ public class Description extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.d("PASSING BACK", "onBackPressed: PASSING DATA BACK" + name);
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("name", name);
+        setResult(Activity.RESULT_OK,returnIntent);
+        finish();
     }
 }

@@ -8,6 +8,15 @@
     android:background="#B3BABD"
     tools:context=".RecipeDetailActivity">
 
+<!--    <androidx.appcompat.widget.Toolbar-->
+<!--        android:minHeight="?attr/actionBarSize"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/toolbar"-->
+<!--        app:titleTextColor="@android:color/white"-->
+<!--        android:background="?attr/colorPrimary">-->
+<!--    </androidx.appcompat.widget.Toolbar>-->
+
     <TextView
         android:id="@+id/recipeName"
         android:layout_width="174dp"
@@ -17,7 +26,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="115dp"
-        android:layout_marginTop="11dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="122dp"
         android:layout_marginBottom="304dp"
         android:gravity="center"
@@ -30,8 +39,8 @@
         android:layout_height="144dp"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="260dp"
-        android:layout_marginBottom="236dp" />
+        android:layout_marginTop="350dp"
+        android:layout_marginBottom="175dp" />
 
     <Button
         android:id="@+id/button"
@@ -43,7 +52,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="70dp"
         android:layout_marginEnd="216dp"
-        android:layout_marginBottom="125dp"
+        android:layout_marginBottom="75dp"
         android:onClick="foodPosition"
         android:text="@string/my_food" />
 
@@ -54,7 +63,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="77dp"
-        android:layout_marginBottom="125dp"
+        android:layout_marginBottom="75dp"
         android:onClick="goToSteps"
         android:text="@string/recipe" />
 
@@ -67,7 +76,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="136dp"
+        android:layout_marginTop="150dp"
         android:layout_marginEnd="37dp"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 

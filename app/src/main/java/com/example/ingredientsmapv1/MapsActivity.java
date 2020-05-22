@@ -17,6 +17,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -103,7 +104,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
             });
-        };
+        }
+        ;
     }
 
 
@@ -174,10 +176,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void calculateEmissions(Float distance) {
-        float inKM = distance/1000.00f;
+        float inKM = distance / 1000.00f;
         float grCO2 = inKM * 147.00f;
         Log.d("grCO2/km", "calculateEmissions: " + grCO2);
-        emissions.setText("Delivery the ingredients will cost " + (grCO2*2) + " grC02/roundtrip");
+        emissions.setText("Delivery the ingredients will cost " + (grCO2 * 2) + " grC02/roundtrip");
     }
 
 
@@ -212,7 +214,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }

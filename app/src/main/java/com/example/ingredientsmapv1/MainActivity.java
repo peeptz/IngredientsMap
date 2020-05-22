@@ -1,32 +1,27 @@
 package com.example.ingredientsmapv1;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.service.voice.AlwaysOnHotwordDetector;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-// import android.database.sqlite;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -41,36 +36,40 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ON CREATE", "onCreate: onCreate called");
-        // Write a message to the database
-        final DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("ingredients");
-//        Log.d("Testing DB", "onCreate() returned: " + recipeRef);
-//        final DatabaseReference recipeRef = database.getReference("ingredientsmap");
-
-        recipeRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("TEST", "onDataChange() returned: " + dataSnapshot.getValue());
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    arrayList.add(child.getKey());
-                    ArrayList r = (ArrayList) child.getValue();
-                    hm.put(child.getKey(), r);
+        Log.d("ONLINE?", "onCreate: " + isOnline());
+        if (isOnline()) {
+            final DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("ingredients");
+            recipeRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d("TEST", "onDataChange() returned: " + dataSnapshot.getValue());
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        arrayList.add(child.getKey());
+                        ArrayList r = (ArrayList) child.getValue();
+                        hm.put(child.getKey(), r);
+                    }
+                    Log.d(TAG, "onDataChange: " + hm);
+                    fillList();
                 }
-                Log.d(TAG, "onDataChange: " + hm);
-                fillList();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println("The read failed: " + databaseError.getCode());
-            }
-        });
-
-
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            });
+        }
 
         super.onCreate(savedInstanceState);
-        DBAdapter dbAdapter = DBAdapter.getInstance(this);
+//            DBAdapter dbAdapter = DBAdapter.getInstance(this);
         setContentView(R.layout.activity_main);
-        myDB = new DBOpenHelper(this);
+//            myDB = new DBOpenHelper(this);
         listView =(ListView) findViewById(R.id.listview);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+
+//        getSupportActionBar().setLogo(R.mipmap.ic_launcher_round);
+//        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+
 
 
         // DELETE EVERYTHING FROM DB
@@ -122,5 +121,16 @@ public class MainActivity extends AppCompatActivity {
             arrayList.add(res.getString(1));
         }
         Log.d(TAG, "getAll() returned: " + arrayList);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager conMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if(netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()){
+            Toast.makeText(MainActivity.this, "No Internet connection!", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }
