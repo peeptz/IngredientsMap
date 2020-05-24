@@ -7,5 +7,6 @@
     <string name="google_maps_key">AIzaSyDq3sdOoAnp-J-Jngnt0Z-f86c63MBIRgY</string>
     <string name="my_food">Order</string>
     <string name="recipe">Steps</string>
-    <string name="emissions">emissions</string>
+    <string name="delivery">Delivery to</string>
+    <string name="cost">will cost around</string>
 </resources>

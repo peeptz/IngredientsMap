@@ -64,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Float distance = 0.000f;
     int counter = 0;
     TextView emissions;
+    TextView address;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -79,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         setContentView(R.layout.activity_maps);
         emissions = findViewById(R.id.CO2);
+        address = findViewById(R.id.address);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -140,7 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double lng = Double.parseDouble(entry.getValue().split(",")[1]);
                 Log.d("POSITION", "onMapReady: POSITION FOR " + ing + " equals lat " + lat + " lng " + lng);
                 LatLng foodLocation = new LatLng(lat, lng);
-                String address = getAddres(foodLocation);
+                String address = getAddress(foodLocation);
                 mMap.addMarker(new MarkerOptions().position(foodLocation).title(ing + ":  " + address));
                 calculateDistance(foodLocation);
             }
@@ -148,6 +150,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.d("MAP EMPTY", "onMapReady: the hashmap was empty");
         }
         currentLocation = new LatLng(latitude, longitude);
+        String currentAddress = getAddress(currentLocation);
+        address.setText(currentAddress);
         mMap.setMyLocationEnabled(true);
         mMap.addMarker(new MarkerOptions().position(currentLocation).title("Sei qui"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -176,10 +180,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void calculateEmissions(Float distance) {
+        // Considering 147 g CO2/km which is the goal set by EU for 2020 for commercial vehicles
         float inKM = distance / 1000.00f;
         float grCO2 = inKM * 147.00f;
         Log.d("grCO2/km", "calculateEmissions: " + grCO2);
-        emissions.setText("Delivery the ingredients will cost " + (grCO2 * 2) + " grC02/roundtrip");
+        emissions.setText((grCO2 * 2) + " grC02/roundtrip");
     }
 
 
@@ -219,7 +224,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public String getAddres(LatLng LatLng) {
+    public String getAddress(LatLng LatLng) {
         geocoder = new Geocoder(this, Locale.getDefault());
         String fullAddress = " ";
         try {

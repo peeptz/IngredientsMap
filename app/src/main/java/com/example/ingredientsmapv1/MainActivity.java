@@ -63,14 +63,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //            myDB = new DBOpenHelper(this);
         listView =(ListView) findViewById(R.id.listview);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
-//        getSupportActionBar().setLogo(R.mipmap.ic_launcher_round);
-//        getSupportActionBar().setDisplayUseLogoEnabled(true);
-
-
-
 
         // DELETE EVERYTHING FROM DB
         // myDB.deleteAll(DBOpenHelper.TABLE_NAME);

@@ -19,12 +19,49 @@
 
     <TextView
         android:id="@+id/CO2"
-        android:layout_width="235dp"
+        android:layout_width="377dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="125dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="236dp"
-        android:text="@string/emissions"
+        android:layout_marginStart="26dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="242dp"
         android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="137dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="253dp"
+        android:layout_marginBottom="301dp"
+        android:text="@string/delivery" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="26dp"
+        android:layout_marginBottom="189dp"
+        android:text="@string/cost" />
 
 </RelativeLayout>

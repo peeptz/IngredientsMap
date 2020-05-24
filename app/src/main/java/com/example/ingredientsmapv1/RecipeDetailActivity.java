@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RecipeDetailActivity extends AppCompatActivity {
 
@@ -52,41 +53,66 @@ public class RecipeDetailActivity extends AppCompatActivity {
         listView =(ListView) findViewById(R.id.listviewIngredients);
 
         getAll(name);
+        getImages(name);
 
-        switch(name) {
-            case "Carbonara":
-                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
-                        .execute("https://static01.nyt.com/images/2018/08/10/dining/carbonara-horizontal/carbonara-horizontal-articleLarge.jpg");
-                break;
-            case "Tortino al Cioccolato":
-                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
-                        .execute("https://www.cucchiaio.it/content/cucchiaio/it/ricette/2016/02/tortino-al-cioccolato-con-cuore-morbido/jcr:content/header-par/image-single.img10.jpg/1456741969164.jpg");
-                break;
-            case "Pizza Quattro Formaggi":
-                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
-                        .execute("https://i2.wp.com/www.piccolericette.net/piccolericette/wp-content/uploads/2017/06/3234_Pizza.jpg");
-                break;
-            default:
-                Log.d("NO_IMAGE", "onCreate() returned: ");
-        }
+//        switch(name) {
+//            case "Carbonara":
+//                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+//                        .execute("https://static01.nyt.com/images/2018/08/10/dining/carbonara-horizontal/carbonara-horizontal-articleLarge.jpg");
+//                break;
+//            case "Tortino al Cioccolato":
+//                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+//                        .execute("https://www.cucchiaio.it/content/cucchiaio/it/ricette/2016/02/tortino-al-cioccolato-con-cuore-morbido/jcr:content/header-par/image-single.img10.jpg/1456741969164.jpg");
+//                break;
+//            case "Pizza Quattro Formaggi":
+//                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+//                        .execute("https://i2.wp.com/www.piccolericette.net/piccolericette/wp-content/uploads/2017/06/3234_Pizza.jpg");
+//                break;
+//            default:
+//                Log.d("NO_IMAGE", "onCreate() returned: ");
+//        }
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(arrayAdapter);
     }
 
     public void getAll(String name) {
-        Log.d("GET ALL", "getAll: getting all " +  name);
+//        Log.d("GET ALL", "getAll: getting all " +  name);
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ingredients/" + name);
-        Log.d("NAME", "getAll: " + name);
+//        Log.d("NAME", "getAll: " + name);
         Query query = reference.orderByChild(name);
-        Log.d("Query", "getAll:" +  query);
+//        Log.d("Query", "getAll:" +  query);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("RESULT", "onDataChange: " + dataSnapshot.getValue());
+//                Log.d("RESULT", "onDataChange: " + dataSnapshot.getValue());
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     String ingredient = child.getValue().toString();
                     arrayList.add(ingredient);
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getImages(String name) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("images/" + name);
+        Query query = reference.orderByChild(name);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("RESULT IMAGES", "onDataChange: " + dataSnapshot.getValue());
+                String imageUrl;
+                if (dataSnapshot.getValue() != null) {
+                    imageUrl = dataSnapshot.getValue().toString();
+                } else {
+                    imageUrl = "https://www.genesismobile.it/wp-content/themes/genesismobile/images/no-image/No-Image-Found-400x264.png";
+                }
+                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+                        .execute(imageUrl);
             }
 
             @Override
