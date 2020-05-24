@@ -5,10 +5,8 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,30 +15,20 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -49,33 +37,29 @@ import java.util.Map;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
-    boolean mLocationPermissionGranted;
+    private boolean mLocationPermissionGranted;
     Object mLastKnownLocation;
-    double longitude;
-    double latitude;
+    private double longitude;
+    private double latitude;
     Geocoder geocoder;
     List<Address> addresses;
     private GoogleMap mMap;
-    private String name;
-    final ArrayList<String> arrayList = new ArrayList<>();
-    ArrayList<String> ingredients;
-    HashMap<String, String> map = new HashMap<>();
+    private ArrayList<String> ingredients;
+    private HashMap<String, String> map = new HashMap<>();
     LatLng currentLocation;
-    Float distance = 0.000f;
-    int counter = 0;
-    TextView emissions;
-    TextView address;
+    private Float distance = 0.000f;
+    private int counter = 0;
+    private TextView emissions;
+    private TextView address;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
+        getLocationPermission();
         if (extras != null) {
             ingredients = (ArrayList<String>) getIntent().getSerializableExtra("EXTRA_RECIPE_INGREDIENTS");
-            String name = extras.getString("EXTRA_RECIPE_DETAIL_NAME");
-            Log.d("NAME", "onCreate of MapsActivity: " + name);
-            Log.d("INGREDIENTS", "onCreate of MapsActivity: " + ingredients);
             getCoordinates();
         }
         setContentView(R.layout.activity_maps);
@@ -87,14 +71,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
     }
 
+    // Getting coordinates of every ingredient
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void getCoordinates() {
-        Log.d("MAP SIZE", "getCoordinates: " + map.size());
-        Log.d("INGRIDIENTS SIZE", "getCoordinates: " + ingredients.size());
         for (int i = 0; i < ingredients.size(); i++) {
             String ing = ingredients.get(i);
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("locations/" + ing);
-//            Query query = reference.orderByChild(name);
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -103,14 +85,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                    System.out.println("The read failed: " + databaseError.getCode());
                 }
             });
         }
-        ;
     }
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -134,13 +113,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             longitude = location.getLongitude();
             latitude = location.getLatitude();
         }
-        Log.d("MAP", "onMapReady: MAP" + map);
         if (map.size() > 0) {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 String ing = entry.getKey();
                 double lat = Double.parseDouble(entry.getValue().split(",")[0]);
                 double lng = Double.parseDouble(entry.getValue().split(",")[1]);
-                Log.d("POSITION", "onMapReady: POSITION FOR " + ing + " equals lat " + lat + " lng " + lng);
                 LatLng foodLocation = new LatLng(lat, lng);
                 String address = getAddress(foodLocation);
                 mMap.addMarker(new MarkerOptions().position(foodLocation).title(ing + ":  " + address));
@@ -159,19 +136,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMaxZoomPreference(14.0f);
     }
 
+    // This method calculates the distances (in meters) between every supplier and our current position
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void calculateDistance(LatLng foodLocation) {
-        Log.d("COUNTER", "calculateEmissions: " + counter);
-//        Log.d("LAT&LONG", "calculateEmissions: " + latitude + " " + longitude + " " + foodLocation.latitude + " " + foodLocation.longitude);
-//        Log.d("LAT&LONG", "calculateEmissions: " + foodLocation);
-//        Log.d("LAT&LONG", "calculateEmissions: " + currentLocation);
         float[] results = new float[1];
         Location.distanceBetween(latitude, longitude, foodLocation.latitude, foodLocation.longitude, results);
         for (Float f : results) {
             distance = Float.sum(distance, f);
         }
         if (counter == 1) {
-            Log.d("TOTAL METERS", "calculateEmissions: " + distance);
             calculateEmissions(distance);
             counter = 0;
         } else {
@@ -179,21 +152,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Based on the distance in kilometers (converted from previous method) calculates the CO2 impact
     private void calculateEmissions(Float distance) {
         // Considering 147 g CO2/km which is the goal set by EU for 2020 for commercial vehicles
         float inKM = distance / 1000.00f;
         float grCO2 = inKM * 147.00f;
-        Log.d("grCO2/km", "calculateEmissions: " + grCO2);
         emissions.setText((grCO2 * 2) + " grC02/roundtrip");
     }
 
-
+    /*
+     * Request location permission, so that we can get the location of the
+     * device.
+     */
     private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -205,6 +176,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Updates the map
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -224,19 +196,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // This method allows us to get the address based on the position (expressed in coordinates)
     public String getAddress(LatLng LatLng) {
         geocoder = new Geocoder(this, Locale.getDefault());
         String fullAddress = " ";
         try {
             addresses = geocoder.getFromLocation(LatLng.latitude, LatLng.longitude, 1);
-
             String address = addresses.get(0).getAddressLine(0);
-//            String area = addresses.get(0).getLocality();
-//            String city = addresses.get(0).getAdminArea();
-//            String country = addresses.get(0).getCountryName();
-//            String postalCode = addresses.get(0).getPostalCode();
             fullAddress = address;
-
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -28,27 +28,24 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "FIREBASE";
     DBOpenHelper myDB;
-    ListView listView;
-    final ArrayList<String> arrayList = new ArrayList<>();
-    final ArrayList<String> r = new ArrayList<>();
+    private ListView listView;
+    private final ArrayList<String> arrayList = new ArrayList<>();
     Map<String, List<String>> hm = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("ON CREATE", "onCreate: onCreate called");
-        Log.d("ONLINE?", "onCreate: " + isOnline());
+        // Checking if the device is connected to the internet
         if (isOnline()) {
+            // Getting recipies through Firebase
             final DatabaseReference recipeRef = FirebaseDatabase.getInstance().getReference("ingredients");
             recipeRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d("TEST", "onDataChange() returned: " + dataSnapshot.getValue());
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         arrayList.add(child.getKey());
                         ArrayList r = (ArrayList) child.getValue();
                         hm.put(child.getKey(), r);
                     }
-                    Log.d(TAG, "onDataChange: " + hm);
                     fillList();
                 }
                 @Override
@@ -59,36 +56,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
-//            DBAdapter dbAdapter = DBAdapter.getInstance(this);
         setContentView(R.layout.activity_main);
-//            myDB = new DBOpenHelper(this);
         listView =(ListView) findViewById(R.id.listview);
-
-        // DELETE EVERYTHING FROM DB
-        // myDB.deleteAll(DBOpenHelper.TABLE_NAME);
-
-         // POPULATE DB with recipes
-//         myDB.InsertData(1, "Pasta Carbonara");
-//         myDB.InsertData(2, "Tortino al cioccolato");
-//         myDB.InsertData(3, "Pizza Quattro formaggi");
-
-         // POPULATE DB with Ingredients
-//         myDB.InsertIngData(1, "Pasta", 350);
-//         myDB.InsertIngData(1, "Uova", 2);
-//         myDB.InsertIngData(2, "Farina", 2);
-//         myDB.InsertIngData(2, "Cioccolato", 2);
-//         myDB.InsertIngData(2, "Burro", 2);
-//         myDB.InsertIngData(3, "Farina", 2);
-//         myDB.InsertIngData(3, "Formaggio", 2);
-//         myDB.InsertIngData(3, "Sale", 2);
-
-//        getAll();
-//        arrayList.add("Pasta Carbonara");
-//        arrayList.add("Pizza Quattro Stagioni");
-//        arrayList.add("Tortino al cioccolato");
-//        arrayList.add("DIOPORCO");
     }
 
+    // Filling list with realuts of the Firebase Query
     public void fillList() {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, arrayList);
         listView.setAdapter(arrayAdapter);
@@ -104,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Old method used with with SQLite before switching to Firebase
     public void getAll() {
         Cursor res = myDB.getAllData();
         if (res.getCount() == 0) {
@@ -115,10 +88,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "getAll() returned: " + arrayList);
     }
 
+    // Method to check is connection is on and working
     public boolean isOnline() {
         ConnectivityManager conMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
-
+    // In case it's not notify it through a toast
         if(netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()){
             Toast.makeText(MainActivity.this, "No Internet connection!", Toast.LENGTH_LONG).show();
             return false;
